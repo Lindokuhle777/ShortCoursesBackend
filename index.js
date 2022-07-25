@@ -181,7 +181,7 @@ app.post("/getCreatedCourses", async (req, res) => {
     };
     coursesArr.push(tempData);
   }
-  console.log(coursesArr);
+ 
 
   res.send(coursesArr);
 });
@@ -220,7 +220,7 @@ app.post("/deleteCourse", async (req, res) => {
 
     const coursesArrSnap = coursesSnap.data().enrolled;
 
-    await updateDoc(doc(db, "Users", userID), {
+    await updateDoc(userRef, {
       enrolled: coursesArrSnap.filter((item) => item !== courseID),
     });
   }
@@ -238,6 +238,40 @@ app.post("/deleteCourse", async (req, res) => {
   });
   await deleteDoc(doc(db, "Courses", courseID));
   res.send("deleted");
+});
+
+app.post("/newCourse", async (req, res) => {
+  const courseID = req.body.courseID;
+  const courseName = req.body.courseName;
+  const duration = req.body.duration;
+  const creator = req.body.creator;
+  const outcomes = req.body.outcomes;
+  const enrolled = [];
+  const images = req.body.images;
+  const description = req.body.description;
+
+  const data = {
+    courseID: courseID,
+    courseName: courseName,
+    duration: duration,
+    creator: creator,
+    outcomes: outcomes,
+    enrolled,
+    images,
+    description: description,
+  };
+
+  await setDoc(doc(db, "Courses", courseID), data);
+
+  
+
+  const userData = await getDoc(doc(db, "Users", creator));
+
+  let createdArr = userData.data().created;
+
+  await updateDoc(doc(db, "Users", creator), { created: [...createdArr, courseID] });
+
+  res.send("created");
 });
 
 app.listen(PORT, () => {
