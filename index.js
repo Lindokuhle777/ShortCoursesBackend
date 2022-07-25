@@ -267,9 +267,9 @@ app.post("/getProfile", async(req, res) =>{
 app.post("/updateBio", async(req,res) =>{
   const userID = req.body.userID;
   const newBio = req.body.newBio;
+
   const userRef = doc(db, "Users", userID);
-  const dataSnap = await getDoc(userRef);
-  dataSnap.data().bio = newBio;
+  await updateDoc(userRef, {bio: newBio});
   res.send("bio updated");
 })
 
