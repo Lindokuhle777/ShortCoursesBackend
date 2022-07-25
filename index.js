@@ -76,9 +76,6 @@ app.post("/enroll", async (req, res) => {
   const courseID = req.body.courseID;
   const userID = req.body.userID;
 
-  console.log(courseID);
-  console.log(userID);
-
   // get user data
 
   const docRef = doc(db, "Users", userID);
@@ -160,7 +157,7 @@ app.post("/getErolledCourses", async (req, res) => {
   res.send(coursesArr);
 });
 
-app.post("/getCreatedCourses",async(req, res)=>{
+app.post("/getCreatedCourses", async (req, res) => {
   const userID = req.body.userID;
 
   const userRef = doc(db, "Users", userID);
@@ -187,9 +184,62 @@ app.post("/getCreatedCourses",async(req, res)=>{
   console.log(coursesArr);
 
   res.send(coursesArr);
+});
 
+app.post("/newUser", async (req, res) => {
+  const userID = req.body.userID;
 
+  // get user data
 
+  const docRef = doc(db, "Users", userID);
+  const docSnap = await getDoc(docRef);
+
+  if (!docSnap.exists()) {
+    const data = { bio: "Set bio", enrolled: [], created: [] };
+    await setDoc(doc(db, "Users", userID), data);
+  }
+  res.send("Done");
+});
+
+app.post("/deleteCourse", async (req, res) => {
+  const courseID = req.body.courseID;
+
+  const courseRef = doc(db, "Courses", courseID);
+
+  const courseData = await getDoc(courseRef);
+
+  const tempEnrolledArr = courseData.data().enrolled;
+  const userID = courseData.data().creator;
+
+  for (let i = 0; i < tempEnrolledArr.length; i++) {
+    const currUserID = tempEnrolledArr[i];
+
+    const userRef = doc(db, "Users", currUserID);
+
+    const coursesSnap = await getDoc(userRef);
+
+    const coursesArrSnap = coursesSnap.data().enrolled;
+
+    await updateDoc(doc(db, "Users", userID), {
+      ...coursesArrSnap,
+      enrolled: coursesArrSnap.filter((item) => item !== courseID),
+    });
+  }
+  const userRef = doc(db, "Users", userID);
+
+  const coursesSnap = await getDoc(userRef);
+
+  const coursesArrSnap = coursesSnap.data().created;
+
+  // const data = {
+  //   created: coursesArrSnap.filter((item) => item !== courseID),
+  // };
+  await updateDoc(doc(db, "Users", userID), {
+    ...coursesArrSnap,
+    created: coursesArrSnap.filter((item) => item !== courseID),
+  });
+  await deleteDoc(doc(db, "Courses", courseID));
+  res.send("deleted");
 });
 
 app.listen(PORT, () => {
