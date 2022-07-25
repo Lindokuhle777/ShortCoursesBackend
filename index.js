@@ -240,6 +240,23 @@ app.post("/deleteCourse", async (req, res) => {
   res.send("deleted");
 });
 
+app.post("/getProfile", async(req, res) =>{
+   const userID = req.body.userID;
+   const userRef = doc(db, "Users", userID);
+   const dataSnap = await getDoc(userRef);
+   const enrolledArrSnap = dataSnap.data().enrolled;
+   const createdArrSnap = dataSnap.data().created;
+   const bioSnap = dataSnap.data().bio;
+
+   const profile = {
+    bio: bioSnap,
+    enrolled: enrolledArrSnap.length,
+    created: createdArrSnap.length,
+   }
+
+   res.send(profile);
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
