@@ -221,7 +221,6 @@ app.post("/deleteCourse", async (req, res) => {
     const coursesArrSnap = coursesSnap.data().enrolled;
 
     await updateDoc(doc(db, "Users", userID), {
-      ...coursesArrSnap,
       enrolled: coursesArrSnap.filter((item) => item !== courseID),
     });
   }
@@ -235,7 +234,6 @@ app.post("/deleteCourse", async (req, res) => {
   //   created: coursesArrSnap.filter((item) => item !== courseID),
   // };
   await updateDoc(doc(db, "Users", userID), {
-    ...coursesArrSnap,
     created: coursesArrSnap.filter((item) => item !== courseID),
   });
   await deleteDoc(doc(db, "Courses", courseID));
