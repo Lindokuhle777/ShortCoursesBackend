@@ -195,7 +195,13 @@ app.post("/newUser", async (req, res) => {
   const docSnap = await getDoc(docRef);
 
   if (!docSnap.exists()) {
-    const data = { bio: "Set bio", enrolled: [], created: [] };
+    const data = { 
+      bio: "Set bio",
+      enrolled: [],
+      created: [],
+      interestsAndSkills: [],
+      
+    };
     await setDoc(doc(db, "Users", userID), data);
   }
   res.send("Done");
@@ -240,39 +246,32 @@ app.post("/deleteCourse", async (req, res) => {
   res.send("deleted");
 });
 
-app.post("/newCourse", async (req, res) => {
-  const courseID = req.body.courseID;
-  const courseName = req.body.courseName;
-  const duration = req.body.duration;
-  const creator = req.body.creator;
-  const outcomes = req.body.outcomes;
-  const enrolled = [];
-  const images = req.body.images;
-  const description = req.body.description;
+app.post("/getProfile", async(req, res) =>{
+   const userID = req.body.userID;
+   const userRef = doc(db, "Users", userID);
+   const dataSnap = await getDoc(userRef);
+   const enrolledArrSnap = dataSnap.data().enrolled;
+   const createdArrSnap = dataSnap.data().created;
+   const bioSnap = dataSnap.data().bio;
 
-  const data = {
-    courseID: courseID,
-    courseName: courseName,
-    duration: duration,
-    creator: creator,
-    outcomes: outcomes,
-    enrolled,
-    images,
-    description: description,
-  };
+   //object with profile data
+   const profile = {
+    bio: bioSnap,
+    enrolled: enrolledArrSnap.length,
+    created: createdArrSnap.length,
+   }
 
-  await setDoc(doc(db, "Courses", courseID), data);
-
-  
-
-  const userData = await getDoc(doc(db, "Users", creator));
-
-  let createdArr = userData.data().created;
-
-  await updateDoc(doc(db, "Users", creator), { created: [...createdArr, courseID] });
-
-  res.send("created");
+   res.send(profile);
 });
+
+app.post("/updateBio", async(req,res) =>{
+  const userID = req.body.userID;
+  const newBio = req.body.newBio;
+
+  const userRef = doc(db, "Users", userID);
+  await updateDoc(userRef, {bio: newBio});
+  res.send("bio updated");
+})
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
