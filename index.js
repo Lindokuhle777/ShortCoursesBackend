@@ -195,7 +195,13 @@ app.post("/newUser", async (req, res) => {
   const docSnap = await getDoc(docRef);
 
   if (!docSnap.exists()) {
-    const data = { bio: "Set bio", enrolled: [], created: [] };
+    const data = { 
+      bio: "Set bio",
+      enrolled: [],
+      created: [],
+      interestsAndSkills: [],
+      
+    };
     await setDoc(doc(db, "Users", userID), data);
   }
   res.send("Done");
@@ -248,6 +254,7 @@ app.post("/getProfile", async(req, res) =>{
    const createdArrSnap = dataSnap.data().created;
    const bioSnap = dataSnap.data().bio;
 
+   //object with profile data
    const profile = {
     bio: bioSnap,
     enrolled: enrolledArrSnap.length,
@@ -256,6 +263,15 @@ app.post("/getProfile", async(req, res) =>{
 
    res.send(profile);
 });
+
+app.post("/updateBio", async(req,res) =>{
+  const userID = req.body.userID;
+  const newBio = req.body.newBio;
+  const userRef = doc(db, "Users", userID);
+  const dataSnap = await getDoc(userRef);
+  dataSnap.data().bio = newBio;
+  res.send("bio updated");
+})
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
