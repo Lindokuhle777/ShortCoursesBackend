@@ -36,19 +36,20 @@ router.post("/", async (req, res) => {
         enrolled: coursesArrSnap.filter((item) => item !== courseID),
       });
     }
+
     const userRef = doc(db, "Users", userID);
   
     const coursesSnap = await getDoc(userRef);
   
     const coursesArrSnap = coursesSnap.data().created;
   
-    // const data = {
-    //   created: coursesArrSnap.filter((item) => item !== courseID),
-    // };
     await updateDoc(doc(db, "Users", userID), {
       created: coursesArrSnap.filter((item) => item !== courseID),
     });
     await deleteDoc(doc(db, "Courses", courseID));
+
+    await deleteDoc(doc(db, "Slides"),courseID);
+
     res.send("deleted");
   });
 
