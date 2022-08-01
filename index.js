@@ -9,6 +9,7 @@ import newCourse from "./routes/newCourse.js";
 import deleteCourse from "./routes/deleteCourse.js";
 import getProfile from "./routes/getProfile.js";
 import updateBio from "./routes/updateBio.js";
+import getSlides from "./routes/getSlides.js";
 
 const app = express();
 
@@ -39,6 +40,8 @@ app.use("/getProfile", getProfile);
 app.use("/updateBio", updateBio);
 
 app.use("/newCourse", newCourse);
+
+app.use("/getSlides",getSlides);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
