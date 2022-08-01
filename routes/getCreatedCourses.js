@@ -34,6 +34,7 @@ router.post("/", async (req, res) => {
       courseID: courseData.data().courseID,
       courseName: courseData.data().courseName,
       images: courseData.data().images,
+      description:courseData.data().description
     };
     coursesArr.push(tempData);
   }
