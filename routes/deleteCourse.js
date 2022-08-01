@@ -48,7 +48,7 @@ router.post("/", async (req, res) => {
     });
     await deleteDoc(doc(db, "Courses", courseID));
 
-    await deleteDoc(doc(db, "Slides"),courseID);
+    await deleteDoc(doc(db, "Slides",courseID));
 
     res.send("deleted");
   });
