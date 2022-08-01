@@ -12,6 +12,7 @@ import updateBio from "./routes/updateBio.js";
 import getSlides from "./routes/getSlides.js";
 import getChapterNotes from "./routes/getChapterNotes.js";
 import saveNotes from "./routes/saveNotes.js";
+import getAllNotes from "./routes/getAllNotes.js";
 
 const app = express();
 
@@ -48,6 +49,8 @@ app.use("/getSlides",getSlides);
 app.use("/getChapterNotes", getChapterNotes);
 
 app.use("/saveNotes", saveNotes);
+
+app.use("/getAllNotes", getAllNotes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
